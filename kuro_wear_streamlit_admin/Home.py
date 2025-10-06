@@ -1,6 +1,6 @@
 import streamlit as st
 from utils_store import inject_base_css, load_products, price_fmt
-st.set_page_config(page_title="KURO WEAR", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ORUK", layout="wide", initial_sidebar_state="collapsed")
 inject_base_css()
 st.markdown("""<div class=\"k-hero\"><h1 style=\"margin:0; font-size:42px; letter-spacing:-0.02em;\">KURO <span class=\"k-accent\">WEAR</span></h1><p style=\"margin-top:6px; color:#cbd5e1;\">Streetwear oscuro, minimalista y técnico.</p></div>""", unsafe_allow_html=True)
 c1,c2,c3,c4 = st.columns([1,1,1,1])
