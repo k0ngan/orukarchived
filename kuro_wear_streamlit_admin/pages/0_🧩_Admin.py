@@ -17,6 +17,45 @@ if not st.session_state.get("pin_ok"):
     st.stop()
 st.success("Acceso admin concedido.")
 products = load_products()
+st.markdown("### Sincronización con GitHub")
+
+# Carga secretos
+gh_cfg = st.secrets.get("github", {})
+TOKEN  = gh_cfg.get("token") or os.environ.get("GITHUB_TOKEN")
+REPO   = gh_cfg.get("repo")  or os.environ.get("GITHUB_REPO")
+BRANCH = gh_cfg.get("branch", "main")
+BASE   = gh_cfg.get("base_path", "")
+
+if not TOKEN or not REPO:
+    st.warning("Configura github.token y github.repo en Secrets para habilitar la sincronización.")
+else:
+    gh = GitHubSync(TOKEN, REPO, BRANCH, BASE)
+
+    col1, col2, col3 = st.columns([1,1,2])
+    with col1:
+        if st.button("⬆️ Subir products.json", use_container_width=True):
+            try:
+                gh.sync_products_json("data/products.json", "data/products.json")
+                st.success("products.json sincronizado.")
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+    with col2:
+        if st.button("⬆️ Subir imágenes", use_container_width=True):
+            try:
+                n = gh.sync_folder_images("data/images", "data/images")
+                st.success(f"Imágenes sincronizadas: {len(n)} archivo(s).")
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+    with col3:
+        if st.button("⬆️ Subir todo (JSON + imágenes)", use_container_width=True):
+            try:
+                gh.sync_products_json("data/products.json", "data/products.json")
+                n = gh.sync_folder_images("data/images", "data/images")
+                st.success(f"Todo sincronizado. Imágenes: {len(n)}")
+            except Exception as e:
+                st.error(f"Error: {e}")
 st.markdown("### Crear producto")
 with st.form("new_product"):
     c1,c2 = st.columns(2)
